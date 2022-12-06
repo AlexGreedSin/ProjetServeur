@@ -1,0 +1,20 @@
+
+<div id="mainBox">
+
+    <ul id="liste">
+        {{#each tournois}}
+        <li class="jeux" id="tournoi{{this.id_tournoi}}">
+
+            <p class="infos"><span>Nom:</span> {{this.nom}}</p>
+            <p class="infos"><span>Description:</span> {{this.description}}</p>
+            <p class="infos"><span>Capacité:</span> {{afficherCapa this.nombre_inscrit}}/{{this.capacite}}</p>
+            <p class="infos"><span>Date:</span> {{afficherDate this.date_debut}}</p>
+            {{#if ../user}}
+            <input type="button" data-id="{{this.id_tournoi}}" value="S'inscrire">
+            {{/if}}
+        </li>
+        {{/each}}
+
+    </ul>
+
+</div>

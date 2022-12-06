@@ -1,0 +1,58 @@
+<div id="formBox">
+    <form id="form-tournoi" novalidate>
+
+        <label>Nom de votre tournoi <span class="surligner">*</span>
+            <input type="text" id="champ-nom" required>
+            <div id="error-nom" class="error"></div>
+        </label>
+
+
+        <label>Courte description de votre tournoi <span class="surligner">*</span>
+            <input type="text" id="champ-des" maxlength="50" required>
+            <div id="error-desc" class="error"></div>
+        </label>
+
+
+        <label>Nombre de participants maximum <span class="surligner">*</span>
+            <input type="number" id="champ-capa" min="2" max="100" required>
+            <div id="error-capa" class="error"></div>
+        </label>
+
+
+        <label>Date de votre tournoi <span class="surligner">*</span>
+            <input type="date" id="champ-date" required>
+            <div id="error-date" class="error"></div>
+        </label>
+
+        <input type="submit" id="btnAjout" value="Ajouter le tournoi">
+
+
+
+
+    </form>
+</div>
+<h2 id="modif"></h2>
+<div id="mainBox">
+
+    <ul id="liste">
+        {{#each tournois}}
+        <li class="jeux" id="tournoi{{this.id_tournoi}}">
+
+            <p class="infos"><span>Nom:</span> {{this.nom}}</p>
+            <p class="infos"><span>Description:</span> {{this.description}}</p>
+            <p class="infos"><span>Capacité:</span> {{afficherCapa this.nombre_inscrit}}/{{this.capacite}}</p>
+            <p class="infos"><span>Date:</span> {{afficherDate this.date_debut}}</p>
+            <input type="button" data-id="{{this.id_tournoi}}" value="Supprimer">
+        </li>
+        {{/each}}
+
+    </ul>
+
+
+
+</div>
+<div id="liste-user">
+{{#each tournoi_utilisateur}}
+<li data-id="{{this.id_utilisateur}}-{{this.id_tournoi}}">id_user: {{this.id_utilisateur}}; id_tournoi: {{this.id_tournoi}}</li>
+{{/each}}
+</div>

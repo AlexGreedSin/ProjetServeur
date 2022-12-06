@@ -1,0 +1,15 @@
+DONE///accept les cookies, 
+DONE///bloquer les routes de post, delete, patch si user est pas connecté,
+DONE///validation courriel 
+https (cours la semaine prochaine)
+Commenter le code
+DONE///Css cookie
+Css liste des utilisateur inscrit /Admin  
+temps reel desinscription (jattend une reponse du prof donc laissez moi le faire)
+modifier !README
+
+
+
+
+
+ 

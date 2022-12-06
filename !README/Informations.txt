@@ -1,0 +1,24 @@
+Notre site web permet présentement à l'utilisateur 1 d'accéder à une liste de tournois de jeux vidéo à La Cité.
+
+**********************************
+PAGE HOME--
+L'utilisateur peut voir tous les tournois disponibles (et leurs informations: Nom, Description, Capacité et Date de début.)
+
+/Validation
+S'il est déjà inscrit à un des tournois, le bouton "S'inscrire" est disabled.
+
+*********************************
+PAGE COMPTE--
+Cette page affiche les tournois auxquels l'utilisateur 1 (Admin) est inscrit.
+En appuyant sur le bouton "Se désinscrire", l'utilisateur n'est plus inscrit à ce tournoi: le bouton dans la page HOME est enabled
+
+/Validation
+pas besoin de valider, car on fait un DELETE, donc la rangée n'existe plus dans la BD
+
+*********************************
+PAGE ADMIN--
+Cette page affiche un formulaire pour l'Admin qui souhaite créer un nouveau tournoi.
+Dans validation.js et dans tournoi.js, la validation des données inscrites sont effectuées.
+Le reste de la page affiche tous les tournois et ajoute l'option de les supprimer de la base de données.
+
+**********************************

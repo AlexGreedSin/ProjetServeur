@@ -1,0 +1,34 @@
+<header>
+        
+        <div id="contn">
+            <div id="titre-page">
+                <h1>Les Tournois de La Cité > <a href="/{{titre}}"><span>{{titre}}</span></a></h1>
+            </div>
+                
+            <div id="barre-nav"> 
+                <nav id="naviger">
+                    {{#if user}}
+                    <a class="ref" href="/Home" >Home</a>
+                    
+                    <a class="ref" href="/Compte">Compte</a>
+                    {{/if}}
+                    {{#if aAcces}}
+                    <a class="ref" href="/Admin">Admin</a>
+                    {{/if}}
+                    {{#unless user}}
+                    <a class="ref" href="/inscription">Inscription</a>
+                    
+                    <a class="ref" href="/connexion">Connexion</a>
+                    {{/unless}}
+                    
+                
+                {{#if user}}
+                <form id="form-deco" method="post" action="/deconnexion">
+                    <input type="submit" value="Déconnexion" id="button-deconnexion">
+                </form>
+                {{/if}}
+                
+                </nav>
+            </div> 
+        </div>
+</header>
