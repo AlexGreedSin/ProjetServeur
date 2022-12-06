@@ -16,6 +16,15 @@
     max-width: 1500px;
     
 }
+#liste-user{
+    margin: 0 auto;
+    
+    height: 100%;
+    width: 1500px;
+    list-style-type: none;
+    max-width: 1500px;
+    
+}
 .jeux{
     background-color: white;
     float: left;

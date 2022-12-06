@@ -44,7 +44,7 @@ const validateMotDePasseClient = () => {
         errorMDP.innerText = 'Veuillez entrer un mot de passe';
         errorMDP.style.display = 'block';
     }
-    else if (inputMotDePasse.validity.rangeUnderflow) {
+    else{
         errorMDP.innerText = 'Votre mot de passe doit contenir au moins 5 charactères';
         errorMDP.style.display = 'block';
     }
