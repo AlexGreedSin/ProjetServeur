@@ -3,6 +3,9 @@ let formInsc = document.getElementById('form-connexion');
 let inputMotDePasse = document.getElementById('input-mot-de-passe');
 let inputCourriel = document.getElementById('input-courriel');
 
+let errorConnexion = document.getElementById('error-mdp-courriel');
+
+
 
 formInsc.addEventListener('submit', async(event) => {
     event.preventDefault();
@@ -23,10 +26,12 @@ formInsc.addEventListener('submit', async(event) => {
         window.location.replace('/compte');
     }
     else if(response.status === 401){
-        let info = await response.json();
-        console.log(info);
+        errorConnexion.innerText = 'Courriel ou mot de passe invalide';
+        errorConnexion.style.display = 'block';
     }
     else {
-        console.log("autre erreur");
+        errorConnexion.innerText = 'Courriel ou mot de passe invalide';
+        errorConnexion.style.display = 'block';
+        
     }
 });

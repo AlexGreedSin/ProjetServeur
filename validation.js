@@ -25,7 +25,7 @@ const validateIdTournoi = (id_tournoi) => {
     return typeof id_tournoi === 'number' && !!id_tournoi;
     
 }
-const validateIdUser = (id_utilisateur) => {
+export const validateIdUser = (id_utilisateur) => {
     return typeof id_utilisateur === 'number' && !!id_utilisateur;
     
 }

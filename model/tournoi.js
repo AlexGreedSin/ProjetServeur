@@ -6,9 +6,8 @@ export const getTournoi = async () => {
     let connection = await connectionPromise;
 
     let resultat = await connection.all(`
-        SELECT * ,COUNT(*) as nombre_inscrit FROM tournoi
-        JOIN tournoi_utilisateur ON tournoi_utilisateur.id_tournoi = tournoi.id_tournoi
-        GROUP BY tournoi.id_tournoi`
+        SELECT * FROM tournoi
+        `
     );
 
     return resultat;
@@ -133,12 +132,24 @@ export const delTournoi = async (id_tournoi) => {
 /**
  * @param {Number} id_tournoi Id du tournoi à supprimer de la TABLE tournoi_utilisateur
  */
-export const delTournoiUtilisateur = async (id_tournoi, id_utilisateur) => {
+export const delTournoiUtilisateur = async (id_tournoi) => {
     let connection = await connectionPromise;
 
     await connection.run(
         `DELETE FROM tournoi_utilisateur
-        WHERE id_tournoi =? AND id_utilisateur = ?`,
+        WHERE id_tournoi =?`,
+        [id_tournoi]
+    );
+}
+/**
+ * @param {Number} id_tournoi Id du tournoi à supprimer de la TABLE tournoi_utilisateur
+ */
+ export const delTournoiUtilisateurS = async (id_tournoi,id_utilisateur) => {
+    let connection = await connectionPromise;
+
+    await connection.run(
+        `DELETE FROM tournoi_utilisateur
+        WHERE id_tournoi =? AND id_utilisateur =?`,
         [id_tournoi, id_utilisateur]
     );
 }

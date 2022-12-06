@@ -37,6 +37,7 @@ const ajouterTournoiClient = (id, nom, description, capacite, date) => {
     let mainBox = document.getElementById('mainBox');
     let li = document.createElement('li');
     li.classList.add('jeux');
+    li.id = "tournoi"+id;
     //Information pour Nom
     let pNom = document.createElement('p');
     pNom.classList.add('infos');
@@ -50,7 +51,7 @@ const ajouterTournoiClient = (id, nom, description, capacite, date) => {
     //Information pour Capacite
     let pCapa = document.createElement('p');
     pCapa.classList.add('infos');
-    pCapa.innerText = "Capacité: 0/" + capacite;
+    pCapa.innerText = "Capacité: " + capacite;
     li.append(pCapa);
     //Information pour Date
     let pDate = document.createElement('p');
@@ -62,6 +63,7 @@ const ajouterTournoiClient = (id, nom, description, capacite, date) => {
     btnSupp.type = 'button';
     btnSupp.dataset.id = id;
     btnSupp.value = 'Supprimer';
+    btnSupp.addEventListener('click', deleteTournoiServeur)
 
     li.append(btnSupp);
 
@@ -79,7 +81,7 @@ const ajouterTournoiServeur = async (event) => {
     //Convertir la date entrée dans le formulaire en INTEGER pour la BD
     const dateDansBox = new Date(champDate.value);
     const dateBD = (epoch(dateDansBox));
-    console.log(dateBD)
+    
     let data = {
         nom: champNom.value,
         description: champDesc.value,
@@ -95,22 +97,21 @@ const ajouterTournoiServeur = async (event) => {
 
     if (response.ok) {
 
-        let data = await response.json();
+        //let data = await response.json();
         //ajouterTournoiClient(data.id, champNom.value, champDesc.value,
             //champCapacite.value, champDate.value);
         viderBox();
-        h2.innerText = 'Ajout du tournoi : Succès!';
-        h2.style.color = 'rgb(32, 192, 32)';
+        
 
         //Inscrire participant fictif
-        let data2 = {
+        /*let data2 = {
             id_tournoi: data.id
         }
         await fetch('/fictif', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data2)
-        });
+        });*/
     }
 
 
@@ -133,11 +134,9 @@ const deleteTournoiServeur = async (event) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     });
-    if (response.ok) {
-        //let li = document.getElementById('tournoi' + data.id_tournoi);
-        //li.style.display = 'none';
-        h2.innerText = 'Suppression du tournoi ' + data.id_tournoi + ' : Succès!';
-        h2.style.color = 'red';
+    if (!response.ok) {
+        
+       response.status(400).end();
     }
 
 }
@@ -286,17 +285,30 @@ let source = new EventSource('/stream');
 //Temps réel ajout tournoi
 source.addEventListener('add-tournoi', (event) => {
     let data = JSON.parse(event.data);
-    ajouterTournoiClient(data.id, data.nom, data.description, data.capacite, data.date)
+    
+
+    let dateAffiche = (new Date(data.date + 86400000)).toLocaleDateString()
+    
+    ajouterTournoiClient(data.id, data.nom, data.description, data.capacite, dateAffiche)
+
+    //css
+        h2.innerText = 'Ajout du tournoi : Succès!';
+        h2.style.color = 'rgb(32, 192, 32)';
 });
 
 //Temps réel suppression tournoi
 
 source.addEventListener('delete-tournoi', (event) => {
     let data = JSON.parse(event.data);
-    //let bouton = document.querySelector(`input[data-id="${data.id}"]`);
-    //bouton.style.display ='none';
+    
+    //Display non pour le tournoi
     let li = document.getElementById('tournoi' + data.id);
     li.style.display = 'none';
+    h2.innerText = 'Suppression du tournoi ' + data.id + ' : Succès!';
+    h2.style.color = 'red';
+    //remove les users dans la liste qui sont inscrits
+    
+    
 });
 
 //Temps réel inscription
@@ -308,14 +320,15 @@ source.addEventListener('inscrire-tournoi', (event) => {
     let div = document.getElementById('liste-user');
     let li = document.createElement('li');
     li.innerText = `id_user: ${data.id_utilisateur}; id_tournoi: ${data.id_tournoi}`;
+    li.dataset.id = `${data.id_utilisateur}-${data.id_tournoi}`;
 
     div.append(li);
 })
 source.addEventListener('desinscrire-tournoi', (event) => {
     event.preventDefault()
     let data = JSON.parse(event.data);
-
-    let li = document.querySelector(`li[data-id="${data.id_utilisateur}-${data.id_tournoi}"]`);
+    //console.log(`li[data-id=${data.id_utilisateur}-${data.id_tournoi}]`)
+    let li = document.querySelector(`[data-id="${data.id_utilisateur}-${data.id_tournoi}"]`);
     let div = document.getElementById('liste-user');
     
     
