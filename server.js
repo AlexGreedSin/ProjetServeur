@@ -10,8 +10,8 @@ import session from 'express-session';
 import memorystore from 'memorystore';
 import passport from 'passport';
 import middlewareSse from './middleware-sse.js';
-import { getFictif, getTournoi, getTournoiInscription, addTournoi, inscrireTournoiUser1, delTournoi, delTournoiAdmin, getTournoiUtilisateur, delTournoiUtilisateur, getCapacite, inscrireTournoiUserFictif } from './model/tournoi.js'
-import { validateTournoi, validateSuppression, validateInscription, validateCourriel, validateMotDePasse, validateNomUser, validatePrenom } from './validation.js';
+import { getFictif, getTournoi, getTournoiInscription, addTournoi, inscrireTournoiUser1, delTournoi, delTournoiAdmin,delTournoiUtilisateurS, getTournoiUtilisateur, delTournoiUtilisateur, getCapacite, inscrireTournoiUserFictif } from './model/tournoi.js'
+import { validateTournoi, validateSuppression, validateInscription, validateCourriel, validateMotDePasse, validateNomUser, validatePrenom, validateIdUser } from './validation.js';
 import { addUtilisateur, getUtilisateur, getUtilisateurByCourriel } from './model/utilisateur.js';
 import './authentification.js';
 
@@ -24,8 +24,8 @@ app.engine('handlebars', engine({
     helpers: {
         //Convertir la date epoch en une date lisible
         //+86 400 000 car sinon ça affiche la journée d'avant
-        afficherDate: (nombre) => (new Date(nombre + 86400000)).toLocaleDateString(),
-        afficherCapa: (nombre) => nombre - 1
+        afficherDate: (nombre) => (new Date(nombre + 86400000)).toLocaleDateString()
+        
     }
 
 
@@ -59,42 +59,55 @@ app.use(express.static('public'));
 
 //Crée la route /tournoi pour visualiser tous les tournois, json
 app.get('/tournoi', async (request, response) => {
-    let tournoi = await getTournoi();
-
-    response.status(200).json(tournoi);
+    if(request.user){
+        let tournoi = await getTournoi();
+        response.status(200).json(tournoi);
+    }
+    else {
+        response.status(403).end();
+    }
 
 });
 
-//Crée la route /tournoi_inscrit pour visualiser les tournois du user 1, json
+//Crée la route /tournoi_inscrit pour visualiser les tournois du user , json
 app.get('/tournoi_inscrit', async (request, response) => {
-    let inscrit = await getTournoiUtilisateur(request.user?.id_utilisateur);
-
-    response.status(200).json(inscrit);
+    if(request.user){
+        let inscrit = await getTournoiUtilisateur(request.user?.id_utilisateur);
+        response.status(200).json(inscrit);
+    }
+    else {
+        response.status(403).end();
+    }
 });
 
 //Crée la route /tournoiinscription pour visualiser tous les inscriptions, json
 app.get('/tournoiinscription', async (request, response) => {
-    let tournoiInscription = await getTournoiInscription();
-    response.status(200).json(tournoiInscription);
+    if(request.user){
+        let tournoiInscription = await getTournoiInscription();
+        response.status(200).json(tournoiInscription);
+    }
+    else {
+        response.status(403).end();
+    }
 });
 
 //Crée la route /nombre_inscrit pour visualiser le nombre d'inscription pour chaques tournois
-app.get('/nombre_inscrit', async (request, response) => {
+/*app.get('/nombre_inscrit', async (request, response) => {
     let nombre = await getCapacite();
     response.status(200).json(nombre);
-});
+});*/
 
 //Crée la route /fictif pour visualiser les inscriptions du participant fictif
-app.get('/fictif', async (request, response) => {
+/*app.get('/fictif', async (request, response) => {
     let fictif = await getFictif();
     response.status(200).json(fictif);
-});
+});*/
 
 
 //Crée la route /Home
 app.get('/Home', async (request, response) => {
 
-
+    if(request.user){
     response.render('Home', {
         titre: 'Home',
         tournois: await getTournoi(),
@@ -107,9 +120,12 @@ app.get('/Home', async (request, response) => {
 
 
     });
+}
+else {
+    response.redirect('/connexion');
+}
 
 });
-//Crée la route /Compte
 app.get('/Compte', async (request, response) => {
 
     if (request.user) {
@@ -130,7 +146,6 @@ app.get('/Compte', async (request, response) => {
         response.redirect('/connexion');
     }
 });
-//Crée la route /Admin
 app.get('/Admin', async (request, response) => {
     if (request.user && request.user?.id_type_utilisateur > 1) {
 
@@ -151,7 +166,6 @@ app.get('/Admin', async (request, response) => {
         response.status(403).end();
     }
 });
-//Crée la route /inscription
 app.get('/inscription', (request, response) => {
     response.render('inscription', {
         titre: 'Inscription',
@@ -163,7 +177,6 @@ app.get('/inscription', (request, response) => {
 
     });
 });
-//Crée la route /connexion
 app.get('/connexion', (request, response) => {
 
     response.render('connexion', {
@@ -186,6 +199,7 @@ app.post('/tournoiinscription', async (request, response) => {
     }
     else {
         let id = await inscrireTournoiUser1(request.body.id_tournoi, request.user.id_utilisateur);
+        
 
         response.status(201).json({ id: id });
         response.pushJson({
@@ -202,7 +216,7 @@ app.delete('/tournoiinscription', (request, response) => {
         response.status(401).end();
     }
     else {
-        delTournoiUtilisateur(request.body.id_tournoi, request.user?.id_utilisateur);
+        delTournoiUtilisateurS(request.body.id_tournoi, request.user?.id_utilisateur);
         response.status(200).end();
         response.pushJson({
             id_tournoi: request.body.id_tournoi,
@@ -251,7 +265,7 @@ app.delete('/tournoi', (request, response) => {
     }
 });
 //Route inscription compte id=2 (utilisateur fictif)
-app.post('/fictif', async (request, response) => {
+/*app.post('/fictif', async (request, response) => {
     if (!request.user) {
         response.status(401).end()
     }
@@ -263,7 +277,7 @@ app.post('/fictif', async (request, response) => {
         response.status(201).json({ id: id });
     }
     
-});
+});*/
 
 
 
@@ -364,7 +378,24 @@ app.post('/connexion', (request1, response, next) => {
                         next(error);
                     }
                     else {
+
+                        /*console.log(utilisateur.id_utilisateur)
+
+                        app.get('/Compte', async (request, response) => {
+
+                            response.render('Compte', {
+                                titre: 'Compte',
+                                tournois: await getTournoiUtilisateur(utilisateur.id_utilisateur),
+                                style: ['/css/compte.css', '/css/headfoot.css'],
+                                scripts: ['/js/compte.js'],
+                                capacitemax: await getCapacite()
+                            });
+
+                        });*/
+
                         response.status(200).end()
+
+
                     }
                 });
 
@@ -393,7 +424,6 @@ app.post('/deconnexion', (request, response, next) => {
 
 });
 
-//Démarrer le serveur en http si le NODE_ENV est en production ou en https si NODE_ENV est en development 
 if(process.env.NODE_ENV === 'production'){
     //Démarrer le serveur avec http
     app.listen(process.env.PORT);
@@ -415,3 +445,10 @@ else{
         process.env.PORT + '/connexion'
     );
 }
+
+//Démarrer le serveur
+/*app.listen(process.env.PORT);
+console.log(
+    'Serveur démarré: http://localhost:' +
+    process.env.PORT + '/Home'
+);*/
